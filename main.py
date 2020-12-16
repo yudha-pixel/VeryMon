@@ -17,6 +17,7 @@ from datetime import datetime
 import pyrebase
 import certifi
 import ssl
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # ~~~~~~~~~~~~~~ DataBase ~~~~~~~~~~~~~~~~~~~
@@ -32,6 +33,8 @@ firebaseConfig = {"apiKey": "AIzaSyAIKiLY261OEhtdxlTCrL1PEaTVB8vMbYI",
 firebase = pyrebase.initialize_app(firebaseConfig)
 db = firebase.database()
 auth = firebase.auth()
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -71,9 +74,20 @@ class LoginScreen(Screen):
         self.manager.current = 'registerscreen'
 
 
+class Hapus(MDRaisedButton):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            # print(f"\nHapus.on_touch_down: id={self.id}")
+            self.dispatch('on_release')
+            return True  # consumed on_touch_down & stop propagation / bubbling
+        return super(Hapus, self).on_touch_down(touch)
+
+
 class MainMenuScreen(Screen):
     temp_email = ''
+    temp_delete = None
 
+    # noinspection PyGlobalUndefined
     def on_enter(self, *args):
         dbs = db.child(self.temp_email).child("data").get()
         grid = self.ids['grid_banner']
@@ -147,36 +161,29 @@ class MainMenuScreen(Screen):
                 layout.add_widget(datajumlah)
 
                 # ~~~~~~~ Button Delete (Masih Bugging)~~~~~~~~
-                func_delete = MDDialog(title='Apakah Anda Yakin ?',
-                                      size_hint=(0.95, 1),
-                                      buttons=[MDRaisedButton(text='Hapus', on_release=self.delete),
-                                               MDRaisedButton(text='Tutup', on_release=self.dialog_cls)])
+                hapus = Hapus(id=f'{ids}', text='Hapus', on_release=self.delete)
+                clear = MDRaisedButton(text='Tutup')
+                delete_dialog = MDDialog(title='Apakah Anda Yakin ?',
+                                         size_hint=(0.95, 1),
+                                         buttons=[hapus, clear])
+                hapus.bind(on_release=delete_dialog.dismiss)
                 delete = MDIconButton(icon='trash-can',
                                       pos_hint={'center_x': .9, 'top': 1},
-                                      on_release=self.dialog)
+                                      on_release=delete_dialog.open)
+                clear.bind(on_release=delete_dialog.dismiss)
+
                 layout.add_widget(delete)
 
                 grid.add_widget(card)
-                print(self.i.val())
-                print(self.i.key())
+
             loading.active = False
         except:
             Snackbar(text="Data Kosong").show()
             loading.active = False
 
-    def dialog(self, obj):
-        self.delete_dialog = MDDialog(title='Apakah Anda Yakin ?',
-                                      size_hint=(0.95, 1),
-                                      buttons=[MDRaisedButton(text='Hapus', on_release=self.delete),
-                                               MDRaisedButton(text='Tutup', on_release=self.dialog_cls)])
-        self.delete_dialog.open()
-
-    def dialog_cls(self, obj):
-        self.delete_dialog.dismiss()
-
-    def delete(self, obj):
-        db.child(self.temp_email).child("data").child(self.i.key()).remove()
-        self.delete_dialog.dismiss()
+    def delete(self, instance):
+        db.child(self.temp_email).child("data").child(instance.id).remove()
+        self.on_enter()
 
 
 sm = ScreenManager()
