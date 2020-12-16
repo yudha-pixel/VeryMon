@@ -147,6 +147,10 @@ class MainMenuScreen(Screen):
                 layout.add_widget(datajumlah)
 
                 # ~~~~~~~ Button Delete (Masih Bugging)~~~~~~~~
+                func_delete = MDDialog(title='Apakah Anda Yakin ?',
+                                      size_hint=(0.95, 1),
+                                      buttons=[MDRaisedButton(text='Hapus', on_release=self.delete),
+                                               MDRaisedButton(text='Tutup', on_release=self.dialog_cls)])
                 delete = MDIconButton(icon='trash-can',
                                       pos_hint={'center_x': .9, 'top': 1},
                                       on_release=self.dialog)
