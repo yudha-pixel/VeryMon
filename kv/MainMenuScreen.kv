@@ -1,0 +1,136 @@
+<Listdata>
+    id:list_data
+    radius: [10.0, 10.0, 10.0, 10.0]
+    md_bg_color: [211/255,211/255,211/255,1]
+
+<ContentDrawer>:
+#    list: list_grid
+    orientation: "vertical"
+    padding: "8dp"
+    spacing: "15dp"
+
+    AnchorLayout:
+        anchor_x: "left"
+        size_hint_y: None
+        height: logo_verymon.height
+
+        Image:
+            id: logo_verymon
+            source: "logo/drawer_logo.png"
+
+    BoxLayout:
+        MDCard:
+            size_hint: .5,.5
+            MDLabel:
+                text: 'Masih Dalam Proses'
+                halign: 'center'
+                font_style: 'Button'
+    Widget:
+
+#    ScrollView:
+#
+#        MDGridLayout:
+#            id: list_grid
+#            cols: 1
+#            adaptive_height: True
+#
+#
+#            #TOMBOL TONGSAMPAH
+#            OneLineIconListItem:
+#                text: 'Tong Sampah'
+#
+#                IconLeftWidget:
+#                    icon: 'trash-can'
+#
+#            OneLineIconListItem:
+#                text: 'Pengaturan'
+#                on_release: app.callback_setting()
+#
+#                IconLeftWidget:
+#                    icon: 'settings'
+#
+#            OneLineIconListItem:
+#                text: 'Tutorial'
+#
+#                IconLeftWidget:
+#                    icon: 'television-play'
+#
+#            OneLineIconListItem:
+#                text: 'Tentang Kami'
+#
+#                IconLeftWidget:
+#                    icon: 'information'
+#
+#            OneLineIconListItem:
+#                text: 'Berikan Nilai'
+#
+#                IconLeftWidget:
+#                    icon: 'star'
+
+    MDList:
+        Screen:
+            MDRectangleFlatButton:
+                text: 'Logout'
+                pos_hint:{'center_x': 0.5}
+                on_release: app.keluar()
+
+
+<MainMenuScreen>
+    name: 'mainmenuscreen'
+    Screen:
+
+        NavigationLayout:
+
+            ScreenManager:
+
+                Screen:
+
+                    BoxLayout:
+                        id: box
+                        orientation: 'vertical'
+
+                        MDToolbar:
+                            id: toolbar
+                            type: 'top'
+                            title: 'VeryMon'
+                            left_action_items:[['menu', lambda x: nav_drawer.set_state('open')]]
+#                            right_action_items:[['refresh', lambda x: root.refresh()],['account', lambda x: root.profile_menu()]]
+                            elevation: 10
+
+                        Screen:
+
+                            MDSpinner:
+                                id: loading
+                                size_hint: None, None
+                                size: dp(46), dp(46)
+                                pos_hint: {'center_x': .5, 'center_y': .5}
+                                active: True
+
+                            ScrollView:
+                                id: scroll
+
+                                GridLayout:
+                                    id: grid_banner
+                                    cols: 1
+                                    padding: 10, 10
+                                    spacing: 10, 10
+                                    size_hint_y: None
+                                    height: self.minimum_height
+                                    row_default_height: 300
+
+
+
+                            MDFloatingActionButton:
+                                icon: 'plus'
+                                pos_hint: {'center_x': .5, 'center_y': .07}
+                                md_bg_color: app.theme_cls.primary_color
+                                theme_text_color: 'Custom'
+                                text_color: [1,1,1,1]
+                                on_release: app.inputscreen()
+
+
+            MDNavigationDrawer:
+                id: nav_drawer
+
+                ContentDrawer:
+                    id: contentdrawer

@@ -1,0 +1,203 @@
+<CustomDropDown>:
+    MDRaisedButton:
+        text: "SmartPhone Pertama anda?"
+        halign: 'left'
+        md_bg_color: 1, 1, 1, 1
+        text_color: 0, 0, 0, 1
+        size_hint: 0.8, None
+        on_release: root.select('SmartPhone Pertama anda?')
+    MDRaisedButton:
+        text: "Makanan Kesukaan Anda?"
+        md_bg_color: 1, 1, 1, 1
+        text_color: 0, 0, 0, 1
+        size_hint: 0.8, None
+        on_release: root.select('Makanan Kesukaan Anda?')
+    MDRaisedButton:
+        text: "E-Commarce Favorit Anda?"
+        md_bg_color: 1, 1, 1, 1
+        text_color: 0, 0, 0, 1
+        size_hint: 0.8, None
+        on_release: root.select('E-Commarce Favorit Anda?')
+
+<RegisterScreen>
+    name: 'registerscreen'
+    on_enter:
+        nama.text = ''
+        email.text = ''
+        no_hp.text = ''
+        password_field_daftar.text = ''
+        password_field_daftar_ulangpassword.text = ''
+        drop_pertanyaan.text = 'Pertanyaan Keamanan Anda'
+        isi_jawaban.text = ''
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            left_action_items:[['arrow-left', lambda x: app.keluar()]]
+
+        MDScreen:
+
+            GridLayout:
+                cols: 1
+                spacing: 10
+                padding: 10
+                adaptive_height: True
+
+                Image:
+                    size_hint_y: 0.3
+
+                    source: 'logo/logo.png'
+                    pos_hint: {'center_x': 0.5}
+
+                MDLabel:
+                    size_hint_y: None
+                    height: 30
+                    font_style: 'H6'
+                    text: 'Pendaftaran'
+                    halign: 'center'
+                    theme_text_color: 'Custom'
+                    text_color: [0, 153/255, 1, 1]
+
+                #text pendaftaran
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 10
+                    padding: 10
+
+                    MDTextFieldRound:
+                        id: nama
+                        hint_text: 'Nama Lengkap'
+                        icon_left: 'account'
+                        size_hint: .87, None
+                        font_size: 0.6*self.height
+                        pos_hint: {"center_x": 0.5}
+                        normal_color: [1,1,1,1]
+                        color_active: [1,1,1,1]
+
+                    MDTextFieldRound:
+                        id: email
+                        text: ''
+                        hint_text: 'Email'
+                        icon_left: 'email'
+                        size_hint: .87, None
+                        font_size: 0.6*self.height
+                        pos_hint: {"center_x": 0.5, 'center_y': 0.5}
+                        normal_color: [1,1,1,1]
+                        color_active: [1,1,1,1]
+
+                    MDTextFieldRound:
+                        id: no_hp
+                        text: ''
+                        hint_text: 'No. Hp'
+                        icon_left: 'phone'
+                        size_hint: .87, None
+                        font_size: 0.6*self.height
+                        pos_hint: {"center_x": 0.5, 'center_y': 0.5}
+                        normal_color: [1,1,1,1]
+                        color_active: [1,1,1,1]
+                        input_filter: 'int'
+
+                    RelativeLayout:
+                        size_hint_y: None
+                        height: password_field_daftar.height
+
+                        MDTextFieldRound:
+                            id: password_field_daftar
+                            hint_text: 'Kata Sandi'
+                            icon_left: 'lock'
+                            password: 'True'
+                            size_hint: .87, None
+                            font_size: 0.6*self.height
+                            pos_hint: {'center_x': .5, 'center_y':0.5}
+                            normal_color: [1,1,1,1]
+                            color_active: [1,1,1,1]
+
+                        # icon mata di masukkan password
+                        MDIconButton:
+                            icon: "eye-off"
+                            pos_hint: {"center_x": 0.89, 'center_y': 0.5}
+                            pos: password_field_daftar.width - self.width + dp(8), 0
+                            on_release:
+                                self.icon = "eye" \
+                                if self.icon == "eye-off" \
+                                else "eye-off"
+                                password_field_daftar.password = True \
+                                if password_field_daftar.password is False \
+                                else False
+
+                    RelativeLayout:
+                        size_hint_y: None
+                        height: password_field_daftar.height
+
+
+                        MDTextFieldRound:
+                            id: password_field_daftar_ulangpassword
+                            hint_text: 'Ulangi Kata Sandi'
+                            password: 'True'
+                            icon_left: 'lock'
+                            size_hint: .87, None
+                            font_size: 0.6*self.height
+                            pos_hint: {'center_x':  0.5, 'center_y': 0.5}
+                            normal_color: [1,1,1,1]
+                            color_active: [1,1,1,1]
+
+                        # icon mata di ulang password
+                        MDIconButton:
+                            icon: "eye-off"
+                            pos_hint: {"center_x": 0.89, 'center_y':0.5}
+                            pos: password_field_daftar_ulangpassword.width - self.width + dp(8), 0
+                            on_release:
+                                self.icon = "eye" \
+                                if self.icon == "eye-off" \
+                                else "eye-off"
+
+                                password_field_daftar_ulangpassword.password = True \
+                                if password_field_daftar_ulangpassword.password is False \
+                                else False
+
+                    RelativeLayout:
+                        size_hint_y: None
+                        height: drop_pertanyaan.height
+
+                        MDTextFieldRound:
+                            icon_left: 'lock-question'
+                            normal_color: [1,1,1,1]
+                            size_hint: .87, None
+                            font_size: 0.6*self.height
+                            pos_hint: {'center_x': .5}
+                            disabled: True
+
+                        MDDropDownItem:
+                            id: drop_pertanyaan
+                            text: 'Pertanyaan Keamanan Anda'
+                            size_hint: .8, None
+                            pos_hint: {'center_x': .56, 'center_y': .52}
+
+                ######## kolom JAWABAN #########
+                    MDTextFieldRound:
+                        id: isi_jawaban
+                        hint_text: 'Isi Jawaban'
+                        icon_left: 'comment-question'
+                        normal_color: [1,1,1,1]
+                        color_active: [1,1,1,1]
+                        size_hint: .87, None
+                        font_size: 0.6*self.height
+                        pos_hint: {'center_x': .5}
+
+                    MDScreen:
+                        size_hint:1, 0.05
+
+            #tombol selanjutnya
+                    MDFillRoundFlatButton:
+                        text: 'SELANJUTNYA'
+                        font_size: '10sp'
+                        pos_hint: {'center_x': 0.5, 'center_y':0.5}
+                        on_release:
+                            app.daftar(nama.text, email.text, no_hp.text, password_field_daftar.text, password_field_daftar_ulangpassword.text, drop_pertanyaan.text, isi_jawaban.text)
+
+                    MDScreen:
+                        size_hint: 1, 0.3
+
+
+

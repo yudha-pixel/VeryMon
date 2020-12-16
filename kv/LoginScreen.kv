@@ -1,0 +1,85 @@
+<LoginScreen>
+    name: 'loginscreen'
+    on_enter:
+        email_field.text = ''
+        password_field.text = ''
+    ######BACKGROUND########
+    MDScreen:
+        MDScreen:
+            md_bg_color: [0, 153/255, 1,1]
+            pos_hint: {'center_x': .5, 'center_y': .15}
+
+        MDCard:
+            size_hint: 0.9, 0.9
+            pos_hint: {'center_x':0.5, 'center_y':0.5}
+            elevation: 10
+
+    ######CONTENT########
+    MDScreen:
+        size_hint: 0.9,0.9
+        pos_hint: {'center_x': .5, 'center_y': .5}
+
+        #logo verymon
+        Image:
+            source: 'logo/logo.png'
+            size_hint: 0.4, 0.4
+            pos_hint: {'center_x': 0.5, 'center_y': 0.86 }
+
+        #label verymon
+        Image:
+            source: 'logo/label-logo.png'
+            size_hint: 0.5, 0.5
+            pos_hint: {'center_x': 0.48, 'center_y': 0.71 }
+
+        #E-mail Field
+        MDTextFieldRound:
+            id: email_field
+            name: email_field
+            hint_text: 'Email/No.HP'
+            size_hint: 0.8, 0.07
+            pos_hint: {'center_x': .5, 'center_y': .55}
+            icon_left: 'account'
+            normal_color: [1,1,1,1]
+            color_active: [1,1,1,1]
+
+        #Password Field
+        MDTextFieldRound:
+            id: password_field
+            hint_text: 'Password'
+            size_hint: 0.8, 0.07
+            pos_hint: {'center_x': .5, 'center_y': .46}
+            icon_left: 'lock'
+            normal_color: [1,1,1,1]
+            color_active: [1,1,1,1]
+            password: True
+
+        #icon show password
+        MDIconButton:
+            icon: "eye-off"
+            ripple_scale: 0.5
+            pos_hint: {"center_x": 0.89,"center_y": .46}
+            pos: password_field.width - self.width + dp(8), 0
+            on_release:
+                self.icon = "eye" \
+                if self.icon == "eye-off" \
+                else "eye-off"
+                password_field.password = True \
+                if password_field.password is False \
+                else False
+
+        #Tombol Daftar Atau Lupa Password
+        MDTextButton:
+            text: "Daftar atau Lupa Kata Sandi"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.37}
+            on_release: root.show_dialog()
+
+        #Tombol masuk
+        MDFillRoundFlatButton:
+            id: btn_login_masuk
+            text: 'MASUK'
+            font_size: '10sp'
+            font_style: 'Button'
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            on_release:
+                app.login(email_field.text, password_field.text)
+                app.root.ids['mainmenuscreen'].ids['nav_drawer'].set_state('close')
