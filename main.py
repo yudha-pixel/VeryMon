@@ -283,10 +283,10 @@ class VeryMonApp(MDApp):
         super().__init__(**kwargs)
         self.screen = Builder.load_file('main.kv')
 
-        dropdown = CustomDropDown()
+        self.dropdown = CustomDropDown()
         mainbutton = self.screen.ids['registerscreen'].ids['drop_pertanyaan']
-        mainbutton.bind(on_release=dropdown.open)
-        dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
+        mainbutton.bind(on_release=self.dropdown.open)
+        self.dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
 
         self.dialog = MDDialog(title="Email / Password Salah!",
                                text='Pilih "Daftar" jika belum atau "Lupa Password" jika sudah tapi lupa password',
