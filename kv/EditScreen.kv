@@ -1,0 +1,129 @@
+<Checkedit@MDCheckbox>:
+    group: 'group'
+    size_hint: None, None
+    size: dp(48), dp(48)
+
+<EditScreen>
+    name: 'editscreen'
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            left_action_items:[['arrow-left', lambda x: root.show_dialog()]]
+            right_action_items:[['content-save-all', lambda x: app.edit(nama.text, mata_uang.text, jenis.text, chk_msk.active,chk_klr.active, jumlah.text, keterangan.text, tgl.text)]]
+
+        MDScreen:
+            FloatLayout:
+                MDLabel:
+                    text:'Edit Data'
+                    pos_hint: {'center_x':.5 , 'top':1}
+                    size_hint: (.8, .1)
+                    halign: 'center'
+                    font_style: 'H6'
+
+                MDLabel:
+                    id: tgl
+                    text:'Tanggal'
+                    pos_hint: {'center_x':.1 , 'top':1}
+                    size_hint: (.8, .1)
+                    halign: 'center'
+                    font_style: 'Button'
+
+                MDTextFieldRound:
+                    id: nama
+                    hint_text: 'Nama Data'
+                    pos_hint: {'center_x':.5 , 'top':0.9}
+                    size_hint: (.85, .05)
+                    color_active: 1, 1, 1, 1
+                    normal_color: 1, 1, 1, 1
+
+                MDTextFieldRound:
+                    id: jenis
+                    hint_text: 'Jenis Keuangan'
+                    pos_hint: {'center_x':.5 , 'top':0.83}
+                    size_hint: (.85, .05)
+                    color_active: 1, 1, 1, 1
+                    normal_color: 1, 1, 1, 1
+
+
+                FloatLayout:
+                    id: io
+                    pos_hint: {'center_x':.5 , 'center_y':0.75}
+                    size_hint: (.9, .1)
+
+                    MDLabel:
+                        text: 'Masuk'
+                        pos_hint: {'center_x':.65, 'center_y':.4}
+                        halign: 'left'
+
+                    Check:
+                        id: chk_msk
+                        active: True
+                        pos_hint: {'center_x':.1 , 'center_y':.4}
+                        on_active:
+                            chk_klr.active = False
+                        on_release:
+                            self.active = True \
+                            if self.active == False \
+                            else True
+
+                    MDLabel:
+                        text: 'Keluar'
+                        pos_hint: {'center_x':.75, 'center_y':.4}
+                        halign: 'center'
+
+                    Check:
+                        id: chk_klr
+                        pos_hint: {'center_x':.63 , 'center_y':.4}
+                        on_active:
+                            chk_msk.active = False
+                        on_release:
+                            self.active = True \
+                            if self.active == False \
+                            else True
+
+                MDLabel:
+                    text: 'Jumlah'
+                    font_style: 'H5'
+                    halign: 'left'
+                    pos_hint: {'center_x':.55 , 'center_y':.66}
+
+                MDTextFieldRound:
+                    id: jumlah
+                    hint_text: '00'
+                    halign: 'right'
+                    pos_hint: {'center_x':.74, 'center_y':.66}
+                    size_hint: (.33, .05)
+                    color_active: 1, 1, 1, 1
+                    normal_color: 1, 1, 1, 1
+                    input_filter: 'int'
+
+                MDTextFieldRound:
+                    pos_hint: {'center_x':.4 , 'center_y':.66}
+                    size_hint: (.1, .05)
+                    normal_color: 1, 1, 1, 1
+                    disabled: True
+
+                MDLabel:
+                    id: mata_uang
+                    text: 'IDR'
+                    pos_hint: {'center_x':.47 , 'center_y':.66}
+                    size_hint: (.2, .05)
+
+                MDLabel:
+                    text: 'Keterangan'
+                    font_style: 'Subtitle1'
+                    halign: 'left'
+                    pos_hint: {'center_x':.55 , 'center_y':.59}
+
+                TextInput:
+                    id: keterangan
+                    hint_text: 'Tuliskan Keterangan dari keuangan jika diperlukan'
+                    pos_hint: {'center_x':.5 , 'center_y':.42}
+                    size_hint: (.9, .3)
+
+                MDFillRoundFlatButton:
+                    text: 'Simpan'
+                    pos_hint: {'center_x': .5, 'top': .2}
+                    on_release: app.edit(nama.text, jenis.text, mata_uang.text, chk_msk.active,chk_klr.active, jumlah.text, keterangan.text, tgl.text)

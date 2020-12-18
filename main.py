@@ -18,6 +18,11 @@ import pyrebase
 import certifi
 import ssl
 
+# Window.size=(720,1480) # HD+
+# Window.size = (1080, 2220)  # FHD+
+# Window.top = -200
+# Window.size=(2960,1440) # WQHD+
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # ~~~~~~~~~~~~~~ DataBase ~~~~~~~~~~~~~~~~~~~
@@ -77,17 +82,74 @@ class LoginScreen(Screen):
 class Hapus(MDRaisedButton):
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
-            # print(f"\nHapus.on_touch_down: id={self.id}")
             self.dispatch('on_release')
             return True  # consumed on_touch_down & stop propagation / bubbling
         return super(Hapus, self).on_touch_down(touch)
+
+
+class Edit(MDIconButton):
+    def on_touch_down(self, touch):
+        if self.collide_point(*touch.pos):
+            self.dispatch('on_release')
+            return True
+        return super(Edit, self).on_touch_down(touch)
+
+
+class EditScreen(Screen):
+    temp_ids = ''
+
+    def on_pre_enter(self, *args):
+        # get database
+        dbs = db.child(MainMenuScreen.temp_email).child("data").child(self.temp_ids).get()
+
+        # tgl
+        tgl = self.ids.tgl
+        tgl.text = dbs.val()["tgl"]
+
+        # nama keuangan
+        nama = self.ids.nama
+        nama.text = dbs.val()["nama"]
+
+        # jenis keuangan
+        jenis = self.ids.jenis
+        jenis.text = dbs.val()["jenis"]
+
+        # Keluar / Masuk
+        print(dbs.val()['io'])
+        for i in range(2):
+            if dbs.val()["io"] == 'Masuk':
+                self.ids.chk_msk.active = True
+            else:
+                self.ids.chk_klr.active = True
+
+        # jumlah uang
+        jumlah = self.ids.jumlah
+        jumlah.text = dbs.val()["jumlah"]
+
+        # keterangan data
+        keterangan = self.ids.keterangan
+        keterangan.text = dbs.val()["keterangan"]
+
+    def show_dialog(self):
+        self.dialog = MDDialog(title="Yakin ingin keluar dan tidak merubah data ?",
+                               size_hint=(.95, 1),
+                               buttons=[MDRaisedButton(text='Ya', on_release=self.dlg_cnl),
+                                        MDRaisedButton(text='Tidak', on_release=self.dlg_cls)])
+        self.dialog.open()
+
+    def dlg_cnl(self, obj):
+        self.dialog.dismiss()
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'mainmenuscreen'
+
+    def dlg_cls(self, obj):
+        self.dialog.dismiss()
 
 
 class MainMenuScreen(Screen):
     temp_email = ''
     temp_delete = None
 
-    # noinspection PyGlobalUndefined
     def on_enter(self, *args):
         dbs = db.child(self.temp_email).child("data").get()
         grid = self.ids['grid_banner']
@@ -160,19 +222,35 @@ class MainMenuScreen(Screen):
                                      pos_hint={'center_x': .45, 'top': .55})
                 layout.add_widget(datajumlah)
 
-                # ~~~~~~~ Button Delete (Masih Bugging)~~~~~~~~
-                hapus = Hapus(id=f'{ids}', text='Hapus', on_release=self.delete)
+                # ~~~~~~~ Button Delete ~~~~~~~~
+                hapus = Hapus(id=f'{ids}',
+                              text='Hapus',
+                              on_release=self.delete)
+
                 clear = MDRaisedButton(text='Tutup')
+
                 delete_dialog = MDDialog(title='Apakah Anda Yakin ?',
                                          size_hint=(0.95, 1),
                                          buttons=[hapus, clear])
+
                 hapus.bind(on_release=delete_dialog.dismiss)
+
                 delete = MDIconButton(icon='trash-can',
                                       pos_hint={'center_x': .9, 'top': 1},
                                       on_release=delete_dialog.open)
+
                 clear.bind(on_release=delete_dialog.dismiss)
 
                 layout.add_widget(delete)
+
+                # ~~~~~~~ Button Delete ~~~~~~~~
+                # edit_menu = print('Teredit')
+                edit = Edit(id=f'{ids}',
+                            icon='pencil',
+                            pos_hint={'center_x': .8, 'top': 1},
+                            on_release=self.edited)
+
+                layout.add_widget(edit)
 
                 grid.add_widget(card)
 
@@ -185,12 +263,19 @@ class MainMenuScreen(Screen):
         db.child(self.temp_email).child("data").child(instance.id).remove()
         self.on_enter()
 
+    def edited(self, instance):
+        EditScreen.temp_ids = instance.id
+        print(instance.id)
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'editscreen'
+
 
 sm = ScreenManager()
 sm.add_widget(LoginScreen(name='loginscreen'))
 sm.add_widget(RegisterScreen(name='registerscreen'))
 sm.add_widget(MainMenuScreen(name='mainmenuscreen'))
 sm.add_widget(InputScreen(name='inputscreen'))
+sm.add_widget(EditScreen(name='editscreen'))
 
 
 class VeryMonApp(MDApp):
@@ -216,7 +301,6 @@ class VeryMonApp(MDApp):
             self.root.current = 'mainmenuscreen'
             self.root.transition.direction = 'left'
         except:
-            print('Email / Username Salah, Silahkan Coba Lagi!')
             self.dialog.open()
 
     def dialog_tutup(self, obj):
@@ -311,6 +395,44 @@ class VeryMonApp(MDApp):
             try:
                 db.child(self.temp_email).child("data").child(id_data).set(data)
                 Snackbar(text="Data Berhasil Disimpan").show()
+            except:
+                Snackbar(text="Data Invalid").show()
+
+            self.root.transition.direction = 'right'
+            self.root.current = 'mainmenuscreen'
+
+    def edit(self, nama, jenis, mata_uang, chk_msk, chk_klr, jumlah, keterangan, tgl):
+        if nama == '':
+            Snackbar(text="Nama data tidak boleh kosong").show()
+        elif jenis == '':
+            Snackbar(text="Jenis data tidak boleh kosong").show()
+        elif jumlah == '':
+            Snackbar(text="Jumalh tidak boleh kosong").show()
+        elif len(keterangan) >= 200:
+            Snackbar(text="Keterangan terlalu panjang").show()
+        else:
+
+            io = ''
+            if chk_msk:
+                io = 'Masuk'
+            elif chk_klr:
+                io = 'Keluar'
+
+            data = {'ids': "%s" % EditScreen.temp_ids,
+                    'tgl': "%s" % tgl,
+                    'mata_uang': "%s" % mata_uang,
+                    'nama': "%s" % nama,
+                    'jenis': "%s" % jenis,
+                    'jumlah': "%s" % jumlah,
+                    'io': "%s" % io,
+                    'keterangan': "%s" % keterangan}
+            print(data)
+
+            try:
+                id_data = EditScreen.temp_ids
+                db.child(self.temp_email).child("data").child(id_data).set(data)
+                Snackbar(text="Data Berhasil Disimpan").show()
+
             except:
                 Snackbar(text="Data Invalid").show()
 

@@ -45,7 +45,7 @@
         #Password Field
         MDTextFieldRound:
             id: password_field
-            hint_text: 'Password'
+            hint_text: 'Kata Sandi'
             size_hint: 0.8, 0.07
             pos_hint: {'center_x': .5, 'center_y': .46}
             icon_left: 'lock'
@@ -83,3 +83,11 @@
             on_release:
                 app.login(email_field.text, password_field.text)
                 app.root.ids['mainmenuscreen'].ids['nav_drawer'].set_state('close')
+
+        MDFillRoundFlatButton:
+            text: 'Keluar'
+            font_size: '10sp'
+            font_style: 'Button'
+            pos_hint: {'center_x': 0.9, 'center_y': 0.1}
+            on_release:
+                app.stop()
